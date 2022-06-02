@@ -1,0 +1,140 @@
+Functional programming:
+- Pure (mathematical) functions
+- Immutable data
+- Declarative
+- Easier to verify
+- Lazy evaluated
+
+
+Functions (Definition)
+name arg1 arg2 ... arn = <expr>
+- No return, the expression is what the expression returns
+
+Ex:
+in_range min max x =
+	x >= min && x <= max
+
+
+Types (Basics)
+name :: <type>
+Ex:
+x :: Integer
+x = 1
+y :: Bool
+y = True
+
+
+Types (Functions)
+- Functions are just values
+in_range :: Integer -> Integer -> Integer -> Bool
+in_range min max x = x >= min && x <= max
+
+
+Functions (let)
+- If we want to store the result of an expression in some variable:
+in_range min max x =
+	let in_lower_bound = min <= x
+	    in_upper_bound = max >= x
+	in
+	in_lower_bound && in_upper_bound
+
+
+Functions (where)
+- Similar to let
+in_range min max x = ilb && iub
+    where
+        ilb = min <= x
+		iub = max >= x
+
+
+Functions (if)
+in_range min max x =
+	if ilb then iub else False
+	where
+		ilb = min <= x
+		iub = max >= x
+
+
+Functions (Infix)
+ghci> :t (+)
+(+) :: Num a => a -> a -> a
+
+Ex:
+add a b = a+b
+add 10 20
+10 `add` 20
+
+
+Recursion:
+- Loops do not exist in Haskell, so have to use Recursion
+name <ars> = ... name <args`> ...
+
+Ex:
+fac n =
+    if n <= 1 then
+        1
+    else
+        n * fac (n-1)
+
+
+Guards:
+fac n
+    | n <= 1 = 1
+    | otherwise = n * fac (n-1)
+- otherwise is a conditional that always evaulates to true, so
+it is essentially else statement.
+
+
+Pattern Matching:
+is_zero 0 = True
+is_zero _ = False
+# more about this below
+
+
+Accumulators:
+fac n = aux n 1
+    where
+        aux n acc
+            | n <= 1 = acc
+            | otherwise = aux (n-1) (n*acc)
+- ^ tail recursion
+
+
+Lists and Tuples:
+- Lists only have one internal type.
+- Lists constructed by constructors:
+[]
+x:xs
+Ex:
+1:2:3:4:5:[]
+gives us [1,2,3,4,5]
+- import Data.List has a bunch of list functions:
+- Head gives you the first element in a list.
+- Tail gives you the tail of a list (every element but the first element).
+- Length tells you length of list.
+- Init gives you a list without the last element, doesn't remove the last element it just returns you a new list without the last element.
+- Null tells you whether a list is empty or not. Important because you can't call head on an empty list.t
+- And does boolean and on any amount of booleans in a list.
+- Or does boolean or on any amount of booleans in a list.
+
+List Comprehension:
+[<gen> | <elem> <- <list>, ..., <guard>, ...]
+Ex:
+[2*x | x <- [1,2,3]] => [2,4,6]
+[2*x | x <- [1,2,3], x > 1] => [4,6]
+[(x,y) | x <- [1,2,3], y <- ['a','b']] =>
+[(1,'a'),(1,'b'),(2,'a'),(2,'b'),(3,'a'),(3,'b')]
+
+
+List Patterns:
+Ex:
+sum :: [Int] -> Int
+sum [] = 0
+sum (x:xs) = x + sum xs
+
+evens :: [Int] -> [Int]
+evens [] = []
+evens (x:xs)
+| mod x 2 == 0 = x : evens xs
+| otherwise = evens xs
+
