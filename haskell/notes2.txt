@@ -1,0 +1,80 @@
+Video #6: https://www.youtube.com/watch?v=ccExc6rrUN8&list=PLe7Ei6viL6jGp1Rfu0dil1JH1SHk9bgDV&index=6
+Higher Order Functions:
+app :: (a->b) -> a -> b
+app f x = f x
+- A function that takes a function. 
+- This can be seen in the type signature as (a->b) is a function that takes an a and gives back a b.
+Ex:
+add1::Int -> Int
+add1 x = x+1
+app add1 1 => 2
+
+Anonymous Functions:
+(\<args> -> <expr>)
+Ex:
+(\x -> x+1)
+add1 = (\x -> x+1)
+- Remember, functions are just values in Haskell.
+(\x y x -> x+y+z)
+Application of Anonymous Functions:
+(\x -> x+1) 1 => 2
+(\x y z -> x+y+z) 1 2 3 => 6
+
+Higher Order + Anonymous:
+app::(a->b)->a->b
+app f x = f x
+app (\x -> x+1) 1 => 2
+
+Map:
+map::(a->b) -> [a] -> [b]
+Ex:
+map (\x->x+1) [1,2,3,4,5] => [2,3,4,5,6]
+map (\(x,y)->x+y) [(1,2),(2,3),(3,4)] => [3,5,7]
+
+Filter:
+filter::(a->Bool) -> [a] -> [a]
+Ex:
+filter (\x->x>2) [1,2,3,4,5] => [3,4,5]
+filter (\(x,y)->x/=y) [(1,2),(2,2)] => [(1,2)]
+
+Video 7: Partial Function Application and Currying:
+Currying:
+f::a -> b -> c -> d
+- If we have a function that takes multiples values, like the above, we can rewrite it as:
+f::a -> (b -> (c -> d))
+- Every function with more than one argument doesn't exist, it is actually a nested set of functions with only one argument.
+Ex:
+add::Int -> Int -> Int
+add x y = x+y
+add x = (\y -> x+y)
+add = (\x -> (\y -> x+y))
+
+Partial Function Application:
+add:: Int -> Int -> Int
+add = (\x -> (\y -> x+y))
+add 1 => ? 
+=> A new function! :: Int -> Int
+=> (\y -> 1+y)
+
+doubleList = map (\x -> 2*x)
+ 
+Video 8: Function Composition:
+Composition:
+(.) :: (b -> c) -> (a -> b) -> a -> c
+^ boob operator above: (dot operator or composition operator)
+(f . g) equivalent to (\x -> f(g x))
+Ex:
+descSort = reverse . sort
+descSort = (\x -> reverse (sort x))
+descSort x = reverse (sort x)
+
+map2d::(a->b) -> [[a]] -> [[b]]
+map2D = map . map
+
+map2D = (\f1 xs -> map f1 xs) . (\f2 ys -> map f2 y2)
+map2D = (\x -> (\f1 xs -> map f1 xs) ((\f2 ys -> map f2 ys) x))
+map2D x = (\f1 xs -> map f1 x2) ((\f2 ys -> map f2 ys) x)
+map2D x = (\f1 xs -> map f1 xs) (\ys -> map x ys)
+map2D x = (\xs -> map (\ys -> map x ys) xs)
+map2D f xs = map(\ys -> map f ys) xs
+
