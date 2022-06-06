@@ -138,3 +138,16 @@ evens (x:xs)
 | mod x 2 == 0 = x : evens xs
 | otherwise = evens xs
 
+Tuples
+(1,2) :: (Int, Int)
+- Don't have to be the same, (Float, Int) etc...
+fst :: (a,v) -> a
+fst (x,_) = x
+snd :: (a,b) -> b
+snd (_,y) = y
+
+addTuples :: [(Int, Int)] -> [Int]
+addTuples xs = [x+y|(x,y) <- xs]
+addTuples [(1,2), (2,3), (100,100)] => [3,5,200]
+
+

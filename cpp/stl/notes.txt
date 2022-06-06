@@ -1,0 +1,16 @@
+TOPIC: STL Intro in C++:
+https://www.youtube.com/watch?v=ZqfoG5w36Qw
+
+1. STL: Standard Template Library
+2. It consists of three components
+    a. Container
+    b. Iterator
+    C. Algorithm
+
+You want to use store information: Container.
+You want to move through your stored data: Iterator.
+- Iterators are inherently different given the container type.
+    - Array: random access iterator.
+    - List: traversal iterator.
+You want to perform operations on your stored data: Algorithm.
+
