@@ -78,3 +78,54 @@ map2D x = (\f1 xs -> map f1 xs) (\ys -> map x ys)
 map2D x = (\xs -> map (\ys -> map x ys) xs)
 map2D f xs = map(\ys -> map f ys) xs
 
+Folding:
+foldr::(a -> b -> b) -> b -> [a] -> b
+foldr (op) a [x1,x2,...,xn] = x1 op x2 op .. op xn op a
+ex:
+foldr (+) 0 [1,2,...,n] = 1 + 2 + ... + n + 0
+sum = foldr (+) 0
+and = foldr (&&) True
+or = foldr (||) False
+foldr (\elem acc -> <term>) <start_acc> <list>
+count e = foldr (\x acc -> if e==x then acc+1 else acc) 0
+isAll e = foldr (\x -> (&&) $ e==x) True
+isAll e = foldr (\x acc -> e==x && acc) True
+length = foldr (\x -> (+) 1) 0
+length = foldr (const $ (+) 1) 0
+map f = foldr ((:) . f)[]
+
+foldl (\acc elem -> <term>) <start_acc> <list>
+
+Datatypes:
+data Name = 
+    Constructor1 <args> | Constructor2 <args> | ...
+Ex:
+data Color = 
+    Red | Orange | Yellow | Green | Blue | Magenta
+data PeaNum = Succ PeaNum | Zero
+data Calculation = 
+    Add Int Int | Sub Int Int | Mul Int Int | Div Int Int
+
+calc :: Calculation -> Int
+calc (Add x y) = x+y
+calc (Sub x y) = x-y
+calc (Mul x y) = x*y
+calc (Div x y) = div x y
+data Tree a = Leaf | Node (Tree a) a (Tree a)
+
+four :: PeaNum
+four = Succ $ Succ $ Succ $ Zero
+tree :: Tree Int
+tree = 
+    Node (Node Leaf 1 Leaf) 2 (Node (Node Leaf 3 Leaf) 4 Leaf)
+
+incr::PeaNum -> PeaNum
+incr = Succ
+decr::PeaNum -> PeaNum
+decr (Succ n) = n
+add::PeaNum -> PeaNum -> PeaNum
+add Zero n = n
+add (Succ m) n = Succ $ add m n
+sum::[PeaNum] -> PeaNum
+sum [] = Zero
+sum (x:xs) = add x $ sum xs

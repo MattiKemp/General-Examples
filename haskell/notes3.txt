@@ -1,0 +1,72 @@
+Typeclasses:
+(+) :: Num a => a -> a -> a
+- a has to have an instance of the Num typeclass
+sum :: Num p => [p] -> p
+sum [] = 0
+sum (x:xs) = x + sum xs
+ghci :info Num
+class Num a where
+    (+) :: a -> a -> a
+    (-) :: a -> a -> a
+    (*) :: a -> a -> a
+    negate :: a -> a
+    abs :: a -> a
+    signum :: a -> a
+    fromInteger :: Integer -> a
+
+ghci> :info Show
+class Show a where
+    showsPrec :: Int -> a -> ShowS
+    show :: a -> String
+    showList :: [a] -> ShowS
+    {-# MINIMAL showsPrec | show #-}
+
+ghci> :info Eq
+class Eq a where
+    (==) :: a -> a -> Bool
+    (/=) :: a -> a -> Bool
+    {-# MINIMAL (==) | (/=) #-}
+
+ghci> :info Ord
+class Eq a => Ord a where
+    ^ mean Ord implies Eq
+
+Ex:
+data Temperature = C Float | F Float
+instance Eq Temperature where
+    (==) (C n) (C m) = n == m
+    (==) (F n) (F m) = n == m
+    (==) (C c) (F f) = (1.8*c + 32) == f
+    (==) (F f) (C c) = (1.8*c + 32) == f
+
+Deriving Typeclasses
+data Temperature = C Float | F Float
+    
+deriving (Show, Eq)
+^ Haskell will try and derive Show for Eq:
+Derived Equivalence:
+    (==) (C n) (C m) = n == m
+    (==) (F n) (F m) = n == m
+    (==) _ _ = False
+- Doesn't work because it compares them structurally
+
+Maybe:
+data Maybe a = Nothing | Just a
+f x returns Result or possibly Error
+So if the result is a valid result return: Just result
+if the result isn't a valid result return: Nothing
+Ex:
+safediv :: Integral a => a -> a -> Maybe a
+safediv a b =
+    if b == 0 then Nothing else Just $ div a b
+
+Functions we can use with this maybe in import Data.Maybe:
+isJust :: Maybe a -> Bool
+isNothing :: Maybe a -> Bool
+fromJust :: Maybe a -> a
+To derive the maybe's original value:
+fromMaybe :: a -> Maybe a -> a
+fromMaybe 3.1415 (Nothing) => 3.1415
+fromMaybe 3.1415 (Just 2.7183) => 2.7183
+
+
