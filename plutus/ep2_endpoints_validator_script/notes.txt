@@ -1,0 +1,73 @@
+link: https://www.youtube.com/watch?v=Sq4q-86LRis
+Validator Script:
+- The code that is used to lock/unlock a transaction (produced by the contract endpoint) on the Cardana chain.
+1. Datum - data the person locking ADA sends.
+2. Redeemer - data the person trying to unlock the ADA sends.
+3. Validation Context - information of the transactions.
+Ex:
+-- | This method is the spending validator (which gets lifted to
+--  its on-chain representation).
+validateSpend :: MyDatum -> MyRedeemer -> ScriptContext -> Bool
+validateSpend _myDataValue _myRedeemerValue _ = error () -- Please provide an implementation.
+
+
+Datum/Redeemer Types:
+-- | These are the data script and redeemer types. We are using an integer
+--   value for both, but you should define your own types.
+newtype MyDatum = MyDatum Integer deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
+PlutusTx.makeLift ''MyDatum
+- Java representation:
+public class MyDatum extends Data{
+    public MyDatum(Integer i){
+        this.i = i;
+    }
+}
+
+newtype MyRedeemer = MyRedeemer Integer deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
+PlutusTx.makeLift ''MyRedeemer
+
+
+Plutus Core Vs. Plutus TX:
+- Plutus TX - The libraries and compiler for compiling Haskell into Plutus Core to form the on-chain part of a contract application.
+
+- Plutus Core - The programming language in which scripts on the Cardano blockchain are written.
+
+
+Template Haskell: sending code to the chain
+
+newtype MyDatum = MyDatum Integer deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
+PlutusTx.makeLift ''MyDatum
+- In the above code, makeLift used for telling Tx what the datatype is.
+- Whenever we want to send something over to Plutus Core, we need to do makeLift it.
+
+data Starter
+instance Scripts.ValidatorTypes Starter where
+    type instance RedeemerType Starter = MyRedeemer
+    type instance DatumType Starter = MyDatum
+- ScriptType: a way to define redeemer and datum types, which we will use later.
+
+starterInstance :: Scripts.TypedValidator Starter
+starterInstance = Scripts.mkTypedValidator @Starter
+    $$(PlutusTx.compile [|| validateSpend ||])
+    $$(PlutusTx.compile [|| wrap ||]) where
+        wrap = Scripts.wrapValidator @MyDatum @MyRedeemer
+- The complied Plutus code we will use to send a transaction across the network.
+
+
+Endpoints:
+-- | The schema of the contract, with two endpoints.
+type Schema =
+    Endpoint "publish" (Integer, Value)
+    .\/ Endpoint "redeem" Integer
+
+contract :: AsContractError e => Contract () Schema e ()
+contract = selectList [publish, redeem]
+- Essentially saying if publish contract is called, run the publish code, otherwise run the redeem code.
+
+-- | The "publish" contract endpoint.
+publish :: AsContractError e => Promise () Schema e ()
+publish = endpoint @"publish" $ \(i, lockedFunds) -> do
+    let tx = Constraints.mustPayToTheScript (MyDatum i) lockedFunds
+    void $ submitTxConstraints starterInstance tx
+- Here is where we define the logic for the publish contract
+

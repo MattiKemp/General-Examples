@@ -1,0 +1,21 @@
+Contracts:
+- The login for your plutus app to handle transactions between wallets
+ex: 
+hello :: Contract BlockchainActions T.Text()
+- In the above, Contract is the data type, BlockchainActions T.Text() are parameters.
+
+Schema:
+- Contains effects such as producing transactions, collecting inputs from users, and watching the blockchain for changes.
+
+Boilerplate code:
+endpoints :: Contract () EmptySchema T.Text ()
+endpoints = hello
+
+--mkSchemaDefinitions ''DummySchema
+mkSchemaDefinitions ''BlockchainActions
+
+$(mkKnownCurrencies [])
+
+LogInfo implementation:
+logInfo :: ToJSON a => a -> Contract s e ()
+logInfo = Contract . L.LogInfo . toJSON
