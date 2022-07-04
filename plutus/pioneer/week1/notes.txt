@@ -1,0 +1,19 @@
+Transaction: something with input and output.
+
+Example1:
+Must use complete UTxO for transaction, Alice can't split up her 100 Ada and send only part of it, she must send all 100 Ada in the transaction.
+So the transaction will have input UTxO of 100 Ada from alice, and an output UTxO with 90 Ada to her and a UTxO with 10 Ada for Bob.
+Alice's original UTxO with 100 Ada is consumed at the end of the Tx.
+
+To make it so Bob can't spend Alice's UTxO, we need signatures.
+For Tx1, since Alice's money is being spent, she needs to provide
+her signature to the transactions (her signing off on the transaction).
+
+Script and Redeemer:
+in Bitcoin, the script can only see the redeemer.
+In Etherium, the script can see the entire blockchain.
+In Cardano, the script can see all of the transaction, inputs, outputs, etc.
+
+Datum, a piece of data that can be associated with a UTxO.
+The script can then see all of the Tx as well as the Datum provided.
+
